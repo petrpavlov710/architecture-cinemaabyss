@@ -26,13 +26,31 @@ async def proxy_movies(request: Request):
         url = settings.movies_service_url
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(
+        method = request.method.lower()
+
+        request_kwargs = {
+            "headers": dict(request.headers),
+            "cookies": dict(request.cookies),
+            "params": dict(request.query_params),
+        }
+
+        if method == "post":
+            request_body = await request.body()
+            if request_body:
+                request_kwargs["content"] = request_body
+                # Или, если ожидается JSON:
+                # request_kwargs["json"] = await request.json()
+        
+        response = await client.request(
+            method,
             f"{url}/api/movies",
-            params=request.query_params,
-            headers=request.headers,
-            cookies=request.cookies,
+            **request_kwargs
         )
-        return JSONResponse(status_code=response.status_code, content=response.json())
+        
+        return JSONResponse(
+            status_code=response.status_code,
+            content=response.json(),
+        )
 
 
 @app.get("/api/movies/health")
@@ -54,13 +72,29 @@ async def proxy_users(request: Request):
     url = settings.monolith_url
 
     async with httpx.AsyncClient() as client:
-        response = await client.get(
+        method = request.method.lower()
+
+        request_kwargs = {
+            "headers": dict(request.headers),
+            "cookies": dict(request.cookies),
+            "params": dict(request.query_params),
+        }
+
+        if method == "post":
+            request_body = await request.body()
+            if request_body:
+                request_kwargs["content"] = request_body
+        
+        response = await client.request(
+            method,
             f"{url}/api/users",
-            params=request.query_params,
-            headers=request.headers,
-            cookies=request.cookies,
+            **request_kwargs
         )
-        return JSONResponse(status_code=response.status_code, content=response.json())
+        
+        return JSONResponse(
+            status_code=response.status_code,
+            content=response.json(),
+        )
 
 
 if __name__ == "__main__":
