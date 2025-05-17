@@ -16,7 +16,7 @@ async def healthcheck():
     return {"status": "Ok"}
 
 
-@app.get("/api/movies")
+@app.api_route("/api/movies", methods=["GET", "POST"])
 async def proxy_movies(request: Request):
     url = settings.monolith_url
     if (
@@ -49,7 +49,7 @@ async def check_health_movies(request: Request):
         return JSONResponse(status_code=response.status_code, content=response.json())
 
 
-@app.get("/api/users")
+@app.api_route("/api/users", methods=["GET", "POST"])
 async def proxy_users(request: Request):
     url = settings.monolith_url
 
