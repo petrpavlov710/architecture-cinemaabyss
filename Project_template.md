@@ -279,7 +279,7 @@ cat .docker/config.json | base64
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
 [Скриншот вызова](./docs/screenshots/kuber_GET_movies.png)
-[Логи event-service после тестов](./docs/screenshots)
+[Логи event-service после тестов](./docs/screenshots/kuber_event_service_logs.png)
 
 
 # Задание 4
@@ -338,7 +338,7 @@ kubectl delete  namespace cinemaabyss
 ```
 Запустите 
 ```bash
-helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
+helm install cinemaabyss ./src/kubernetes/helm --namespace cinemaabyss --create-namespace
 ```
 Если в процессе будет ошибка
 ```code

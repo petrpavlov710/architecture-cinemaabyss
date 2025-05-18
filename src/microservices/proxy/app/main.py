@@ -38,8 +38,6 @@ async def proxy_movies(request: Request):
             request_body = await request.body()
             if request_body:
                 request_kwargs["content"] = request_body
-                # Или, если ожидается JSON:
-                # request_kwargs["json"] = await request.json()
         
         response = await client.request(
             method,
