@@ -1,0 +1,98 @@
+@startuml to-be containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title "Диаграмма контейнеров микросервисного онлайн кинотеатра "КиноБездна""
+
+Person(User, "Пользователь")
+
+System_Boundary(System, "Онлайн кинотеатр КиноБездна") {
+    Container(MobileApp, "Мобильное приложение", "React Native", "Мобильное приложение кинотеатра")
+    Container(WebApp, "Веб-приложение", "React", "Веб-приложение кинотеатра")
+    Container(TvApp, "TV-приложение", "React Native", "TV-приложение кинотеатра")
+
+    Container(BffMobile, "BFF для мобильного приложения", "Node.js", "BFF для мобильного приложения")
+    Container(BffWeb, "BFF для веб-приложения", "Node.js", "BFF для веб-приложения")
+    Container(BffTv, "BFF для TV-приложения", "Node.js", "BFF для TV-приложения")
+
+    Container(ApiGateway, "API Gateway", "Kong", "Маршрутизирует и кэширует запросы, балансирует нагрузку")
+    ContainerQueue(Kafka, "Брокер сообщений", "Kafka", "Брокер для обработки сообщений")
+
+    Container_Boundary(Movies, "Управление фильмами") {
+        Container(MoviesSevice, "Сервис фильмов", "FastAPI", "Обрабатывает всю функциональность, связанную с фильмами")
+        ContainerDb(MoviesDb, "База данных для фильмов", "PostgreSQL", "База данных для хранения связанных с фильмом данных (метаданные, рейтинги, жанры и пр.)")
+        Rel(MoviesSevice, MoviesDb, "Чтение/Запись", "SQL")
+    }
+
+
+    Container_Boundary(Users, "Управление пользователями") {
+        Container(UsersSevice, "Сервис пользователей", "FastAPI", "Обрабатывает всю функциональность, связанную с пользователями")
+        ContainerDb(UserDb, "База данных пользователей", "PostgreSQL", "База данных для хранения пользователей")
+        Rel(UsersSevice, UserDb, "Чтение/Запись", "SQL")
+    }
+
+    Container_Boundary(Recommendations, "Управление рекомендациями") {
+        Container(RecommendationsSevice, "Сервис рекомендаций", "FastAPI", "Обрабатывает всю функциональность, связанную с рекомендациями")
+        ContainerDb(RecommendationsDb, "База данных рекомендаций", "Redis", "База данных для хранения информации о рекомендациях")
+        Rel(RecommendationsSevice, RecommendationsDb, "Хранение рекомендаций для конкретного фильма")
+    }
+    Container_Boundary(Payments, "Управление оплатой") {
+        Container(PaymentsSevice, "Сервис оплаты", "FastAPI", "Обрабатывает всю функциональность, связанную с оплатой")
+        ContainerDb(PaymentsDb, "База данных платежей", "PostgreSQL", "База данных для хранения информации о платежах, подписках, скидках")
+        Rel(PaymentsSevice, PaymentsDb, "Чтение/Запись", "SQL")
+    }
+    Container_Boundary(Analytics, "Управление аналитикой") {
+        Container(AnalyticsSevice, "Сервис аналитики", "FastAPI", "Обрабатывает всю функциональность, связанную с аналитикой")
+        ContainerDb(AnalyticsDb, "База данных аналитики", "PostgreSQL", "База данных для хранения аналитических данных")
+        Rel(AnalyticsSevice, AnalyticsDb, "Чтение/Запись", "SQL")
+    }
+}
+
+Container_Ext(Recommender, "Система рекомендаций", "Система рекомендаций фильмов")
+Container_Ext(Payment, "Платежный сервис", "Позволяет производить оплату различными способами")
+
+Rel(User, MobileApp, "Пользуется приложением")
+Rel(User, WebApp, "Пользуется приложением")
+Rel(User, TvApp, "Пользуется приложением")
+
+Rel(MobileApp, ApiGateway, "Отправляет запросы", "HTTPS, REST")
+Rel(WebApp, ApiGateway, "Отправляет запросы", "HTTPS, REST")
+Rel(TvApp, ApiGateway, "Отправляет запросы", "HTTPS, REST")
+
+Rel(ApiGateway, BffMobile, "Отправляет запросы", "HTTPS, REST")
+Rel(ApiGateway, BffWeb, "Отправляет запросы", "HTTPS, REST")
+Rel(ApiGateway, BffTv, "Отправляет запросы", "HTTPS, REST")
+
+Rel(BffMobile, MoviesSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffMobile, UsersSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffMobile, RecommendationsSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffMobile, PaymentsSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffMobile, AnalyticsSevice, "Отправляет запросы", "HTTPS, REST")
+
+Rel(BffWeb, MoviesSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffWeb, UsersSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffWeb, RecommendationsSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffWeb, PaymentsSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffWeb, AnalyticsSevice, "Отправляет запросы", "HTTPS, REST")
+
+Rel(BffTv, MoviesSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffTv, UsersSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffTv, RecommendationsSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffTv, PaymentsSevice, "Отправляет запросы", "HTTPS, REST")
+Rel(BffTv, AnalyticsSevice, "Отправляет запросы", "HTTPS, REST")
+
+Rel(MoviesSevice, Kafka, "Создает события")
+Rel(UsersSevice, Kafka, "Создает события")
+Rel(RecommendationsSevice, Kafka, "Создает события")
+Rel(PaymentsSevice, Kafka, "Создает события")
+Rel(AnalyticsSevice, Kafka, "Создает события")
+
+Rel(Kafka, MoviesSevice, "Получает события")
+Rel(Kafka, UsersSevice, "Получает события")
+Rel(Kafka, RecommendationsSevice, "Получает события")
+Rel(Kafka, PaymentsSevice, "Получает события")
+Rel(Kafka, AnalyticsSevice, "Получает события")
+
+Rel(PaymentsSevice, Payment, "Обрабатывает платежи", "HTTPS, REST")
+Rel(RecommendationsSevice, Recommender, "Отправляет запросы", "HTTPS, REST")
+
+@enduml

@@ -5,7 +5,7 @@
 1. Спроектируйте to be архитектуру КиноБездны, разделив всю систему на отдельные домены и организовав интеграционное взаимодействие и единую точку вызова сервисов.
 Результат представьте в виде контейнерной диаграммы в нотации С4.
 Добавьте ссылку на файл в этот шаблон
-[ссылка на файл](ссылка)
+[To-Be_Container](./docs/diagrams/To-Be_Container.puml)
 
 # Задание 2
 
@@ -57,11 +57,14 @@
     - Добавьте в docker-compose новый сервис, kafka там уже есть
 
 Необходимые тесты для проверки этого API вызываются при запуске npm run test:local из папки tests/postman 
-Приложите скриншот тестов и скриншот состояния топиков Kafka из UI http://localhost:8090 
+Приложите скриншот тестов и скриншот состояния топиков Kafka из UI http://localhost:8090
+
+[Скриншот тестов](./docs/screenshots/tests.png)
+[Скриншот состояния топиков Kafka](./docs/screenshots/kafka_ui.png)
 
 # Задание 3
 
-Команда начала переезд в Kubernetes для лучшего масштабирования и повышения надежности. 
+Команда начала переезд в Kubernetes для лучшего масштабирования и повышения надежности.
 Вам, как архитектору осталось самое сложное:
  - реализовать CI/CD для сборки прокси сервиса
  - реализовать необходимые конфигурационные файлы для переключения трафика.
@@ -108,6 +111,8 @@ jobs:
 ```
 Как только сборка отработает и в github registry появятся ваши образы, можно переходить к блоку настройки Kubernetes
 Успешным результатом данного шага является "зеленая" сборка и "зеленые" тесты
+
+[Скриншот CI/CD](./docs/screenshots/CI-CD.png)
 
 
 ### Proxy в Kubernetes
@@ -166,7 +171,7 @@ cat .docker/config.json | base64
 
   Доработайте src/kubernetes/event-service.yaml и src/kubernetes/proxy-service.yaml
 
-  - Необходимо создать Deployment и Service 
+  - Необходимо создать Deployment и Service
   - Доработайте ingress.yaml, чтобы можно было с помощью тестов проверить создание событий
   - Выполните дальшейшие шаги для поднятия кластера:
 
@@ -273,6 +278,9 @@ cat .docker/config.json | base64
 #### Шаг 3
 Добавьте сюда скриншота вывода при вызове https://cinemaabyss.example.com/api/movies и  скриншот вывода event-service после вызова тестов.
 
+[Скриншот вызова](./docs/screenshots/kuber_GET_movies.png)
+[Логи event-service после тестов](./docs/screenshots/kuber_event_service_logs.png)
+
 
 # Задание 4
 Для простоты дальнейшего обновления и развертывания вам как архитектуру необходимо так же реализовать helm-чарты для прокси-сервиса и проверить работу 
@@ -330,7 +338,7 @@ kubectl delete  namespace cinemaabyss
 ```
 Запустите 
 ```bash
-helm install cinemaabyss .\src\kubernetes\helm --namespace cinemaabyss --create-namespace
+helm install cinemaabyss ./src/kubernetes/helm --namespace cinemaabyss --create-namespace
 ```
 Если в процессе будет ошибка
 ```code
