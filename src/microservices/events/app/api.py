@@ -34,12 +34,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.exception_handler(Exception)
-async def exception_handler(request, exc):
-    log.error(f"Exception occurred: {exc}")
-    return ErrorModel(error=str(exc))
-
-
 @app.get("/api/events/health")
 async def healthcheck():
     return {"status": True}
